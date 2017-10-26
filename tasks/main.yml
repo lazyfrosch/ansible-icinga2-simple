@@ -1,0 +1,21 @@
+---
+- include_tasks: repo.yml
+  when: icinga2_manage_repo == yes
+
+- name: Install icinga2
+  package:
+    name: icinga2
+    state: present
+
+- name: Icinga2 config test
+  command: icinga2 daemon -C
+  changed_when: false
+
+- name: Enable icinga2 service
+  service:
+    name: icinga2
+    state: started
+    enabled: yes
+
+- include_tasks: ido.yml
+  when: icinga2_manage_ido == yes

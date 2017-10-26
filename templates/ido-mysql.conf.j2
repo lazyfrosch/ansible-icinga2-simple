@@ -1,0 +1,10 @@
+// {{ ansible_managed }}
+
+library "db_ido_mysql"
+
+object IdoMysqlConnection "ido-mysql" {
+  host = "{{ icinga2_ido_host }}"
+  database = "{{ icinga2_ido_database }}"
+  user = "{{ icinga2_ido_username }}"
+  password = "{{ icinga2_ido_username }}"
+}

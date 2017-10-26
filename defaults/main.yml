@@ -1,0 +1,10 @@
+---
+icinga2_manage_ido: yes
+icinga2_manage_repo: yes
+
+icinga2_ido_type: mysql
+icinga2_ido_host: localhost
+icinga2_ido_database: icinga2
+icinga2_ido_username: icinga2
+icinga2_ido_password: icinga2
+

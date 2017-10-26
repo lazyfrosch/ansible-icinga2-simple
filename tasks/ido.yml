@@ -1,0 +1,56 @@
+---
+- name: Fail when unsupported database type
+  fail: msg="Only icinga2_ido_type == mysql is supported right now"
+  when: icinga2_ido_type != "mysql"
+
+- name: Install IDO package
+  package:
+    name: icinga2-ido-{{ icinga2_ido_type }}
+    state: present
+  notify:
+    - Restart icinga2
+
+- name: Check IDO schema in MySQL
+  command: >
+    mysql
+    -h {{ icinga2_ido_host|quote }}
+    -u {{ icinga2_ido_username|quote }}
+    -p{{ icinga2_ido_password|quote }}
+    {{ icinga2_ido_database|quote }}
+    -Ns -e "SHOW TABLES LIKE 'icinga_dbversion'"
+  register: table_exists
+  changed_when: false
+  when: icinga2_ido_type == "mysql"
+
+- name: Import IDO schema into MySQL
+  mysql_db:
+    state: import
+    name: "{{ icinga2_ido_database }}"
+    login_host: "{{ icinga2_ido_host }}"
+    login_user: "{{ icinga2_ido_username }}"
+    login_password: "{{ icinga2_ido_password }}"
+    target: /usr/share/icinga2-ido-{{ icinga2_ido_type }}/schema/{{ icinga2_ido_type }}.sql
+  when:
+    - icinga2_ido_type == "mysql"
+    - table_exists.stdout == ""
+
+# TODO: update possible?
+
+- name: Update ido-{{ icinga2_ido_type }} configuration
+  template:
+    src: ido-{{ icinga2_ido_type }}.conf.j2
+    dest: /etc/icinga2/features-available/ido-{{ icinga2_ido_type }}.conf
+    mode: 0640
+  notify:
+    - Restart icinga2
+
+- name: Enable ido-{{ icinga2_ido_type }} feature
+  command: icinga2 feature enable ido-{{ icinga2_ido_type }}
+  register: enable_result
+  changed_when: '"already enabled" not in enable_result.stdout'
+  notify:
+    - Restart icinga2
+
+- name: Icinga2 config test
+  command: icinga2 daemon -C
+  changed_when: false
