@@ -8,3 +8,13 @@ icinga2_ido_database: icinga2
 icinga2_ido_username: icinga2
 icinga2_ido_password: icinga2
 
+icinga2_plugin_packages:
+  - nagios-plugins-disk
+  - nagios-plugins-dummy
+  - nagios-plugins-http
+  - nagios-plugins-load
+  - nagios-plugins-ping
+  - nagios-plugins-procs
+  - nagios-plugins-swap
+  - nagios-plugins-ssh
+  - nagios-plugins-users
