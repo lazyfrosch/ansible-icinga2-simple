@@ -1,0 +1,19 @@
+---
+- name: Enable feature command
+  command: icinga2 feature enable command
+  register: enable_result
+  changed_when: '"already enabled" not in enable_result.stdout'
+  notify: Restart icinga2
+  when: icinga2_feature_command
+
+- name: Disable feature command
+  command: icinga2 feature disable command
+  register: enable_result
+  changed_when: '"already disabled" not in enable_result.stdout'
+  notify: Restart icinga2
+  when: not icinga2_feature_command
+
+- name: Icinga2 config test
+  command: icinga2 daemon -C
+  notify: Restart icinga2
+  changed_when: false

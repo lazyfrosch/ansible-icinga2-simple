@@ -23,5 +23,9 @@
     state: started
     enabled: yes
 
-- include_tasks: ido.yml
+- name: Manage icinga2 features
+  include_tasks: features.yml
+
+- name: Manage IDO
+  include_tasks: ido.yml
   when: icinga2_manage_ido == yes
